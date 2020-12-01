@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
   try {
     FIX::SessionSettings settings(argv[1]);
 
-    App app("/usr/local/share/quickfix/FIX44.xml", std::stoi(argv[2]));
+    App app(argv[2], std::stoi(argv[3]));
     FIX::FileStoreFactory storeFactory(settings);
     FIX::FileLogFactory logFactory(settings);
     FIX::SocketInitiator initiator(app, storeFactory, settings, logFactory);

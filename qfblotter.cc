@@ -1,3 +1,6 @@
+#include "app.h"
+#include "httplib.h"
+
 #include <quickfix/Application.h>
 #include <quickfix/FileLog.h>
 #include <quickfix/FileStore.h>
@@ -6,8 +9,6 @@
 
 #include <chrono>
 #include <thread>
-
-#include "app.h"
 
 using namespace std::chrono_literals;
 
@@ -21,7 +22,19 @@ int main(int argc, char *argv[]) {
     FIX::SocketAcceptor acceptor(app, storeFactory, settings, logFactory);
     acceptor.start();
 
-    std::this_thread::sleep_for(1h);
+    httplib::Server server;
+    server.Get("/", [](const httplib::Request &req, httplib::Response &resp) {
+      std::cout << "get" << std::endl;
+      resp.set_content("{\"hello\":\"get\"}", "application/json");
+    });
+    server.Put("/", [](const httplib::Request &req, httplib::Response &resp) {
+      std::cout << "Put" << std::endl;
+      resp.set_content("{\"hello\":\"post\"}", "application/json");
+      FIX::Message msg;
+      msg.setField(35, "D");
+      app.Send(msg)
+    });
+    server.listen("0.0.0.0", 8083);
   } catch (std::exception &e) {
     std::clog << e.what();
   }

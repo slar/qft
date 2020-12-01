@@ -1,5 +1,7 @@
+#include <quickfix/Application.h>
 #include <quickfix/DataDictionary.h>
 #include <quickfix/Message.h>
+#include <quickfix/Session.h>
 #include <quickfix/fix44/ExecutionReport.h>
 
 #include <sstream>
@@ -74,6 +76,7 @@ public:
       s->send(msgout);
     }
   }
+  void Send(FIX::Message &msg) { s->send(msg); }
 
 private:
   Readable readable;
